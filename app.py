@@ -40,6 +40,6 @@ for i, col in enumerate(["category", "name", "description"]):
     ax.hist(menusdf[col + "_num_tokens"], bins=50)
     ax.set(title=f"{col} num tokens")
 
-
+st.pyplot(fig)
 
 st.write("ok")
