@@ -13,6 +13,7 @@ import torch
 
 DATA_DIR = "."
 HF_TOKEN = os.getenv("HF_TOKEN")
+LIVE_APP = os.getenv("LIVE_APP", "no")
 
 st.title("Look at this restaurant data from Kaggle🪿")
 
@@ -46,9 +47,10 @@ sentences = menusdf["concat"].tolist()
 corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-def do_search():
-    print("DEBUG using, query", st.session_state.query, )
-    query_embedding = embedder.encode(st.session_state.query, convert_to_tensor=True)
+def do_search(query):
+    # st.session_state.
+    print("DEBUG using, query", query, )
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
     cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
@@ -59,6 +61,7 @@ def do_search():
 
     out_vec = []
     for score, idx in zip(top_results[0], top_results[1]):
+        idx = int(idx)
         restaurant_id = restaurant_id_map[idx]
         out_vec.append(
             {"text": corpus[idx].strip(), "score": "(Score: {:.4f})".format(score),
@@ -70,11 +73,11 @@ def do_search():
     st.table(pd.DataFrame.from_records(out_vec))
 
 
-    if "how_many_executions" in st.session_state:
-        st.session_state["how_many_executions"] += 1
-    else:
-        st.session_state["how_many_executions"] = 1
-    st.write("Ok done with execution number ", st.session_state["how_many_executions"])
+#    if "how_many_executions" in st.session_state:
+#        st.session_state["how_many_executions"] += 1
+#    else:
+#        st.session_state["how_many_executions"] = 1
+#    st.write("Ok done with execution number ", st.session_state["how_many_executions"])
 
 
 
@@ -119,8 +122,9 @@ for paraphrase in [row for row in paraphrases
 
 ########## ########## ########## ########## ########## ##########
 st.title("Use cosine simularity for a phrase")
-st.session_state.query = st.text_area("Input to search for.")
-button_ok = st.button("Search", on_click=do_search)
+# st.session_state.query
+query = st.text_area("Input to search for.")
+button_ok = st.button("Search", on_click=do_search, args=(query, ))
 
 st.write("Ok bye.")
 
