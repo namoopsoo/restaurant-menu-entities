@@ -130,6 +130,7 @@ def do_search():
 
 ########## ########## ########## ########## ########## ##########
 st.title("Use cosine simularity for a phrase")
+st.write(f"This below demo takes a phrase, embeds it with the model, \"{model_name}\", and shows the ranked cosine similarity output against a 1000-row sample from the menu dataset available at https://www.kaggle.com/code/sadeghjalalian/uber-eats-restaurant-menus/input?select=restaurants.csv . (Note because this is a sample, this will randomly resample the 1000 records each time.) ")
 # st.session_state.query
 # button_ok = st.button("Search")
 
