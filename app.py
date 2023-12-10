@@ -1,33 +1,32 @@
-
-
-
 import streamlit as st
-
 import pandas as pd
 import pandas as pd
+import os
 from pathlib import Path
 from dotenv import dotenv_values
 import matplotlib.pyplot as plt
+
+from sentence_transformers import SentenceTransformer, util
+from sentence_transformers.util import semantic_search, cos_sim
+import torch
 
 
 x = st.slider('Select a value')
 st.write(x, 'squared is', x * x)
 
-
 DATA_DIR = "."
+HF_TOKEN = os.getenv("HF_TOKEN")
 
+st.title("Look at this restaurant data from Kaggle🪿")
 
 menusdf = pd.read_csv(Path(DATA_DIR) / "restaurant-menus.csv")
 menusdf = menusdf[menusdf["description"].notnull()].copy()
+
 restaurantsdf = pd.read_csv(Path(DATA_DIR) / "restaurants.csv")
 
-st.write("head")
+st.write(menusdf.head())
 
-
-print(menusdf.head())
-
-st.write("Let's look at the distribution of word counts for these columns")
-
+st.title("Let's look at the distribution of word counts for these columns")
 
 fig, axes = plt.subplots(figsize=(12,6), nrows=3, ncols=1)
 fig.patch.set_facecolor("xkcd:mint green")
@@ -42,4 +41,35 @@ for i, col in enumerate(["category", "name", "description"]):
 
 st.pyplot(fig)
 
-st.write("ok")
+st.title("Lets run paraphrase mining on a 1000 row sample of this menu data")
+
+model_name = "all-MiniLM-L12-v2"
+embedder = SentenceTransformer(
+    model_name,
+    use_auth_token=HF_TOKEN,
+)
+
+menusdf["concat"] = menusdf.apply(lambda x: f'{x["category"]} {x["name"]} {x["description"]}', axis=1)
+sampledf = menusdf.sample(n=1000).reset_index()
+restaurant_id_map = {i: x for i, x in enumerate(sampledf["restaurant_id"].tolist())}
+list(restaurant_id_map.items())[:5]
+sentences = sampledf["concat"].tolist()
+# sentences = np.random.choice(all_sentences, size=1000, replace=False)
+# Choose 1000 first try, 
+# paraphrases = util.paraphrase_mining(model, sentences)
+st.write("First five sentences,")
+st.write(sentences[:5])
+
+paraphrases = util.paraphrase_mining(model, sentences)
+
+# paraphrases_with_restaurant_ids = [x for x in paraphrases ]
+for paraphrase in [row for row in paraphrases 
+                   if (row[0] < .99
+                   and (restaurant_id_map[row[1]] != restaurant_id_map[row[2]])) 
+                  ][:5]:
+    score, i, j = paraphrase
+    restaurant_id_1, restaurant_id_2 = (restaurant_id_map[i], restaurant_id_map[j])
+    st.write(
+        f"{sentences[i]} (restaurant={restaurant_id_1})\n{sentences[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
+    # .format(sentences[i], sentences[j], score)
+         )
