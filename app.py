@@ -26,20 +26,6 @@ restaurant_map = {x["id"]: {"name": x["name"], "full_address": x["full_address"]
 
 st.write(menusdf.head())
 
-st.title("Let's look at the distribution of word counts for these columns")
-
-fig, axes = plt.subplots(figsize=(12,6), nrows=3, ncols=1)
-fig.patch.set_facecolor("xkcd:mint green")
-plt.tight_layout()
-for i, col in enumerate(["category", "name", "description"]):
-
-    menusdf[col + "_num_tokens"] = menusdf[col].map(lambda x: len(x.split(" "))) #  if isinstance(x, str) else 0
-    ax = axes[i] #fig.add_subplot(int(f"31{i + 1}"))
-    
-    ax.hist(menusdf[col + "_num_tokens"], bins=50)
-    ax.set(title=f"{col} num tokens")
-
-st.pyplot(fig)
 
 
 model_name = "all-MiniLM-L12-v2"
@@ -104,6 +90,22 @@ st.session_state.top_k = top_k
 st.button("Search", on_click=do_search)
 
 
+
+########## ########## ########## ########## ########## ##########
+st.title("Let's look at the distribution of word counts for these columns")
+
+fig, axes = plt.subplots(figsize=(12,6), nrows=3, ncols=1)
+fig.patch.set_facecolor("xkcd:mint green")
+plt.tight_layout()
+for i, col in enumerate(["category", "name", "description"]):
+
+    menusdf[col + "_num_tokens"] = menusdf[col].map(lambda x: len(x.split(" "))) #  if isinstance(x, str) else 0
+    ax = axes[i] #fig.add_subplot(int(f"31{i + 1}"))
+    
+    ax.hist(menusdf[col + "_num_tokens"], bins=50)
+    ax.set(title=f"{col} num tokens")
+
+st.pyplot(fig)
 
 ########## ########## ########## ########## ########## ##########
 st.title("Paraphrase mining")
