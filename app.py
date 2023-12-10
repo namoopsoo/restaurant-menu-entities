@@ -18,6 +18,7 @@ st.title("Look at this restaurant data from Kaggle🪿")
 
 menusdf = pd.read_csv(Path(DATA_DIR) / "restaurant-menus.csv")
 menusdf = menusdf[menusdf["description"].notnull()].copy()
+menusdf["concat"] = menusdf.apply(lambda x: f'{x["category"]} {x["name"]} {x["description"]}', axis=1)
 
 restaurantsdf = pd.read_csv(Path(DATA_DIR) / "restaurants.csv")
 restaurant_vec = restaurantsdf.to_dict(orient="records")
@@ -40,42 +41,25 @@ for i, col in enumerate(["category", "name", "description"]):
 
 st.pyplot(fig)
 
-st.title("Lets run paraphrase mining on a 1000 row sample of this menu data")
 
 model_name = "all-MiniLM-L12-v2"
 embedder = SentenceTransformer(
     model_name,
     use_auth_token=HF_TOKEN,
 )
+# embedder = SentenceTransformer(model_name)
 
-menusdf["concat"] = menusdf.apply(lambda x: f'{x["category"]} {x["name"]} {x["description"]}', axis=1)
 sampledf = menusdf.sample(n=1000).reset_index()
 restaurant_id_map = {i: x for i, x in enumerate(sampledf["restaurant_id"].tolist())}
 list(restaurant_id_map.items())[:5]
 sentences_1000 = sampledf["concat"].tolist()
-# sentences = np.random.choice(all_sentences, size=1000, replace=False)
-# Choose 1000 first try, 
-# paraphrases = util.paraphrase_mining(model, sentences)
-st.write("First five sentences,")
-st.write(sentences_1000[:5])
 
-embedder = SentenceTransformer(model_name)
-paraphrases = util.paraphrase_mining(embedder, sentences_1000)
+########## ########## ########## ########## ########## ##########
 
-st.title("Paraphrase mining")
+sentences = menusdf["concat"].tolist()
+corpus = sentences_1000
+corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-# paraphrases_with_restaurant_ids = [x for x in paraphrases ]
-for paraphrase in [row for row in paraphrases 
-                   if (row[0] < .99
-                   and (restaurant_id_map[row[1]] != restaurant_id_map[row[2]])) 
-                  ][:5]:
-    score, i, j = paraphrase
-    restaurant_id_1, restaurant_id_2 = (restaurant_id_map[i], restaurant_id_map[j])
-    st.write(
-        f"{sentences_1000[i]} (restaurant={restaurant_id_1})\n{sentences_1000[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
-         )
-
-##########
 def do_search():
 
     st.session_state.query
@@ -120,8 +104,26 @@ st.session_state.top_k = top_k
 st.button("Search", on_click=do_search)
 
 
-sentences = menusdf["concat"].tolist()
-corpus = sentences_1000
-corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-st.write("")
+########## ########## ########## ########## ########## ##########
+st.title("Paraphrase mining")
+st.title("Lets run paraphrase mining on a 1000 row sample of this menu data")
+st.write("First five sentences,")
+st.write(sentences_1000[:5])
+
+paraphrases = util.paraphrase_mining(embedder, sentences_1000)
+
+
+# paraphrases_with_restaurant_ids = [x for x in paraphrases ]
+for paraphrase in [row for row in paraphrases 
+                   if (row[0] < .99
+                   and (restaurant_id_map[row[1]] != restaurant_id_map[row[2]])) 
+                  ][:5]:
+    score, i, j = paraphrase
+    restaurant_id_1, restaurant_id_2 = (restaurant_id_map[i], restaurant_id_map[j])
+    st.write(
+        f"{sentences_1000[i]} (restaurant={restaurant_id_1})\n{sentences_1000[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
+         )
+
+
+st.write("Ok bye.")
