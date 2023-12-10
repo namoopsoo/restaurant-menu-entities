@@ -53,15 +53,17 @@ menusdf["concat"] = menusdf.apply(lambda x: f'{x["category"]} {x["name"]} {x["de
 sampledf = menusdf.sample(n=1000).reset_index()
 restaurant_id_map = {i: x for i, x in enumerate(sampledf["restaurant_id"].tolist())}
 list(restaurant_id_map.items())[:5]
-sentences = sampledf["concat"].tolist()
+sentences_1000 = sampledf["concat"].tolist()
 # sentences = np.random.choice(all_sentences, size=1000, replace=False)
 # Choose 1000 first try, 
 # paraphrases = util.paraphrase_mining(model, sentences)
 st.write("First five sentences,")
-st.write(sentences[:5])
+st.write(sentences_1000[:5])
 
-model = SentenceTransformer(model_name)
-paraphrases = util.paraphrase_mining(model, sentences)
+embedder = SentenceTransformer(model_name)
+paraphrases = util.paraphrase_mining(embedder, sentences_1000)
+
+st.title("Paraphrase mining")
 
 # paraphrases_with_restaurant_ids = [x for x in paraphrases ]
 for paraphrase in [row for row in paraphrases 
@@ -71,6 +73,33 @@ for paraphrase in [row for row in paraphrases
     score, i, j = paraphrase
     restaurant_id_1, restaurant_id_2 = (restaurant_id_map[i], restaurant_id_map[j])
     st.write(
-        f"{sentences[i]} (restaurant={restaurant_id_1})\n{sentences[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
-    # .format(sentences[i], sentences[j], score)
+        f"{sentences_1000[i]} (restaurant={restaurant_id_1})\n{sentences_1000[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
          )
+
+##########
+st.title("Use cosine simularity for a phrase")
+
+query = st.text_area("Input to search for.")
+top_k = st.number_input("How many top results?")
+
+sentences = menusdf["concat"].tolist()
+corpus = sentences_1000
+corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
+
+query_embedding = embedder.encode(query, convert_to_tensor=True)
+
+# We use cosine-similarity and torch.topk to find the highest 5 scores
+cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
+top_results = torch.topk(cos_scores, k=top_k)
+
+st.write("\nTop 5 most similar sentences in corpus:")
+
+out_vec = []
+for score, idx in zip(top_results[0], top_results[1]):
+    out_vec.append(
+        {"text": corpus[idx].strip(), "score": "(Score: {:.4f})".format(score)}
+    )
+
+st.table(pd.DataFrame.from_records(out_vec))
+
+
