@@ -60,6 +60,7 @@ sentences = sampledf["concat"].tolist()
 st.write("First five sentences,")
 st.write(sentences[:5])
 
+model = SentenceTransformer(model_name)
 paraphrases = util.paraphrase_mining(model, sentences)
 
 # paraphrases_with_restaurant_ids = [x for x in paraphrases ]
