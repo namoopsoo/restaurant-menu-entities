@@ -11,9 +11,6 @@ from sentence_transformers.util import semantic_search, cos_sim
 import torch
 
 
-x = st.slider('Select a value')
-st.write(x, 'squared is', x * x)
-
 DATA_DIR = "."
 HF_TOKEN = os.getenv("HF_TOKEN")
 
@@ -23,6 +20,8 @@ menusdf = pd.read_csv(Path(DATA_DIR) / "restaurant-menus.csv")
 menusdf = menusdf[menusdf["description"].notnull()].copy()
 
 restaurantsdf = pd.read_csv(Path(DATA_DIR) / "restaurants.csv")
+restaurant_vec = restaurantsdf.to_dict(orient="records")
+restaurant_map = {x["id"]: {"name": x["name"], "full_address": x["full_address"]} for x in restaurant_vec}
 
 st.write(menusdf.head())
 
@@ -77,30 +76,52 @@ for paraphrase in [row for row in paraphrases
          )
 
 ##########
+def do_search():
+
+    st.session_state.query
+    st.session_state.top_k
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
+
+    # We use cosine-similarity and torch.topk to find the highest 5 scores
+    cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
+    top_results = torch.topk(cos_scores, k=top_k)
+
+    st.write("\nTop 5 most similar sentences in corpus:")
+
+    out_vec = []
+    for score, idx in zip(top_results[0], top_results[1]):
+        restaurant_id = restaurant_id_map[idx]
+        out_vec.append(
+            {"text": corpus[idx].strip(), "score": "(Score: {:.4f})".format(score),
+             "restaurant": restaurant_map[restaurant_id]["name"],
+             "address": restaurant_map[restaurant_id]["full_address"],
+             }
+        )
+
+    st.table(pd.DataFrame.from_records(out_vec))
+
+
+    if "how_many_executions" in st.session_state:
+        st.session_state["how_many_executions"] += 1
+    else:
+        st.session_state["how_many_executions"] = 1
+    st.write("Ok done with execution number ", st.session_state["how_many_executions"])
+
+
+
 st.title("Use cosine simularity for a phrase")
 
 query = st.text_area("Input to search for.")
+st.session_state.query = query
+
 top_k = int(st.number_input("How many top results?"))
+st.session_state.top_k = top_k
+
+st.button("Search", on_click=do_search)
+
 
 sentences = menusdf["concat"].tolist()
 corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-query_embedding = embedder.encode(query, convert_to_tensor=True)
-
-# We use cosine-similarity and torch.topk to find the highest 5 scores
-cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
-top_results = torch.topk(cos_scores, k=top_k)
-
-st.write("\nTop 5 most similar sentences in corpus:")
-
-out_vec = []
-for score, idx in zip(top_results[0], top_results[1]):
-    out_vec.append(
-        {"text": corpus[idx].strip(), "score": "(Score: {:.4f})".format(score)}
-    )
-
-st.table(pd.DataFrame.from_records(out_vec))
-
-st.write("Ok done.")
-
+st.write("")
