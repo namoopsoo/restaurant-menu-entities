@@ -102,4 +102,5 @@ for score, idx in zip(top_results[0], top_results[1]):
 
 st.table(pd.DataFrame.from_records(out_vec))
 
+st.write("Ok done.")
 
