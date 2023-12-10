@@ -37,7 +37,7 @@ embedder = SentenceTransformer(
 
 sampledf = menusdf.sample(n=1000).reset_index()
 restaurant_id_map = {i: x for i, x in enumerate(sampledf["restaurant_id"].tolist())}
-list(restaurant_id_map.items())[:5]
+# list(restaurant_id_map.items())[:5]
 sentences_1000 = sampledf["concat"].tolist()
 
 ########## ########## ########## ########## ########## ##########
@@ -47,12 +47,13 @@ corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
 def do_search():
-    print("DEBUG using, query", st.session_state.query, "top k", st.session_state.top_k)
+    print("DEBUG using, query", st.session_state.query, )
     query_embedding = embedder.encode(st.session_state.query, convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
     cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
-    top_results = torch.topk(cos_scores, k=st.session_state.top_k)
+    top_k = 10
+    top_results = torch.topk(cos_scores, k=top_k)
 
     st.write(f"\nTop {st.session_state.top_k} most similar sentences in corpus:")
 
@@ -76,16 +77,6 @@ def do_search():
     st.write("Ok done with execution number ", st.session_state["how_many_executions"])
 
 
-
-st.title("Use cosine simularity for a phrase")
-
-query = st.text_area("Input to search for.")
-st.session_state.query = query
-
-top_k = int(st.number_input("How many top results?"))
-st.session_state.top_k = top_k
-
-st.button("Search", on_click=do_search)
 
 
 
@@ -126,4 +117,10 @@ for paraphrase in [row for row in paraphrases
          )
 
 
+########## ########## ########## ########## ########## ##########
+st.title("Use cosine simularity for a phrase")
+st.session_state.query = st.text_area("Input to search for.")
+button_ok = st.button("Search", on_click=do_search)
+
 st.write("Ok bye.")
+
