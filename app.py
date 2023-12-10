@@ -25,7 +25,7 @@ restaurant_vec = restaurantsdf.to_dict(orient="records")
 restaurant_map = {x["id"]: {"name": x["name"], "full_address": x["full_address"]} for x in restaurant_vec}
 
 st.write(menusdf.head())
-
+st.write("mmkay")
 
 
 model_name = "all-MiniLM-L12-v2"
@@ -47,16 +47,14 @@ corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
 def do_search():
-
-    st.session_state.query
-    st.session_state.top_k
-    query_embedding = embedder.encode(query, convert_to_tensor=True)
+    print("DEBUG using, query", st.session_state.query, "top k", st.session_state.top_k)
+    query_embedding = embedder.encode(st.session_state.query, convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
     cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
-    top_results = torch.topk(cos_scores, k=top_k)
+    top_results = torch.topk(cos_scores, k=st.session_state.top_k)
 
-    st.write("\nTop 5 most similar sentences in corpus:")
+    st.write(f"\nTop {st.session_state.top_k} most similar sentences in corpus:")
 
     out_vec = []
     for score, idx in zip(top_results[0], top_results[1]):
