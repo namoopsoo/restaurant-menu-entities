@@ -57,7 +57,7 @@ def do_search(query):
     top_k = 10
     top_results = torch.topk(cos_scores, k=top_k)
 
-    st.write(f"\nTop {top_k} most similar sentences in corpus:")
+    st.write(f"\nTop {top_k} most similar sentences in corpus: to \"{query}\"")
 
     out_vec = []
     for score, idx in zip(top_results[0], top_results[1]):
