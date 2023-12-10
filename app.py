@@ -80,7 +80,7 @@ for paraphrase in [row for row in paraphrases
 st.title("Use cosine simularity for a phrase")
 
 query = st.text_area("Input to search for.")
-top_k = st.number_input("How many top results?")
+top_k = int(st.number_input("How many top results?"))
 
 sentences = menusdf["concat"].tolist()
 corpus = sentences_1000
