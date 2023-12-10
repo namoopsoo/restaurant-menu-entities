@@ -48,8 +48,10 @@ corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
 def do_search(query):
-    # st.session_state.
     print("DEBUG using, query", query, )
+    if not query:
+        return
+    # st.session_state.
     query_embedding = embedder.encode(query, convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
@@ -84,6 +86,7 @@ def do_search(query):
 
 
 ########## ########## ########## ########## ########## ##########
+"""
 st.title("Let's look at the distribution of word counts for these columns")
 
 fig, axes = plt.subplots(figsize=(12,6), nrows=3, ncols=1)
@@ -98,8 +101,10 @@ for i, col in enumerate(["category", "name", "description"]):
     ax.set(title=f"{col} num tokens")
 
 st.pyplot(fig)
+"""
 
 ########## ########## ########## ########## ########## ##########
+"""
 st.title("Paraphrase mining")
 st.title("Lets run paraphrase mining on a 1000 row sample of this menu data")
 st.write("First five sentences,")
@@ -118,13 +123,15 @@ for paraphrase in [row for row in paraphrases
     st.write(
         f"{sentences_1000[i]} (restaurant={restaurant_id_1})\n{sentences_1000[j]} (restaurant={restaurant_id_2})\n Score: {score:.4f}\n\n" 
          )
+"""
 
 
 ########## ########## ########## ########## ########## ##########
 st.title("Use cosine simularity for a phrase")
 # st.session_state.query
-query = st.text_area("Input to search for.")
-button_ok = st.button("Search", on_click=do_search, args=(query, ))
+query = ""
+query = st.text_area("Input to search for.", on_click=do_search, args=(query, ))
+# button_ok = st.button("Search")
 
 st.write("Ok bye.")
 
