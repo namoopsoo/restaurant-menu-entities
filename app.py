@@ -49,9 +49,13 @@ sentences = menusdf["concat"].tolist()
 corpus = sentences_1000
 corpus_embeddings = embedder.encode(corpus, convert_to_tensor=True)
 
-def do_search(query):
+def do_search():
+
+    query = st.session_state.my_query
     print("DEBUG using, query", query, )
+
     if not query:
+        st.write("Query empty, doing nothing")
         return
     # st.session_state.
     query_embedding = embedder.encode(query, convert_to_tensor=True)
@@ -127,9 +131,17 @@ def do_search(query):
 ########## ########## ########## ########## ########## ##########
 st.title("Use cosine simularity for a phrase")
 # st.session_state.query
-query = ""
-query = st.text_area("Input to search for.", on_change=do_search, args=(query, ))
 # button_ok = st.button("Search")
+
+
+
+with st.form(key='my_form'):
+    query = st.text_area("Input to search for.", key="my_query")
+    # slider_input = st.slider('My slider', 0, 10, 5, key='my_slider')
+    # checkbox_input = st.checkbox('Yes or No', key='my_checkbox')
+    submit_button = st.form_submit_button(label='Search', on_click=do_search)
+
+
 
 st.write("Ok bye.")
 
