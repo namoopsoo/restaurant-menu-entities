@@ -28,14 +28,14 @@ dishdf_sample_10k = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-10k-sampl
 corpus = dishdf_sample_10k["name"].tolist()
 
 
-menuitemdf = load_dataset("namoopsoo-org/2023-12-17-nypl-menuitem").to_pandas()
-menupagedf = load_dataset("namoopsoo-org/2023-12-17-nypl-menupage").to_pandas()
-menudf = load_dataset("namoopsoo-org/2023-12-17-nypl-menu").to_pandas()
+menuitemdf = load_dataset("namoopsoo-org/2023-12-17-nypl-menuitem")["train"].to_pandas()
+menupagedf = load_dataset("namoopsoo-org/2023-12-17-nypl-menupage")["train"].to_pandas()
+menudf = load_dataset("namoopsoo-org/2023-12-17-nypl-menu")["train"].to_pandas()
 
 
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
 st.write(dishdf_sample_10k.head())
-st.write("mmkay 2023-12-17-20:50")
+st.write("mmkay 2023-12-17-20:52")
 
 # Try that search again, 
 # query = "chicken parmesan sandwich"
