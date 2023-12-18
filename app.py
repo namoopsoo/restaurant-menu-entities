@@ -76,12 +76,25 @@ def do_search():
         dish_id = dishdf_sample_10k.iloc[i]["id"]
         dish_name = dishdf_sample_10k.iloc[i]["name"]
 
-        menu_page_id = menuitemdf[menuitemdf.dish_id == dish_id].iloc[0]["menu_page_id"]
+        if menuitemdf[menuitemdf.dish_id == dish_id].empty:
+            restaurant_name = "-"
+            location = "-"
+        else:
+            menu_page_id = menuitemdf[menuitemdf.dish_id == dish_id].iloc[0]["menu_page_id"]
 
-        menu_id = menupagedf[menupagedf.id == menu_page_id].iloc[0]["menu_id"]
-        restaurant = menudf[menudf.id == menu_id].iloc[0]
-        restaurant_name = restaurant["name"] or restaurant["venue"]
-        location = restaurant["place"]
+            if menupagedf[menupagedf.id == menu_page_id].empty:
+                restaurant_name = "-"
+                location = "-"
+            else:
+                menu_id = menupagedf[menupagedf.id == menu_page_id].iloc[0]["menu_id"]
+
+                if menudf[menudf.id == menu_id].empty:
+                    restaurant_name = "-"
+                    location = "-"
+                else:
+                    restaurant = menudf[menudf.id == menu_id].iloc[0]
+                    restaurant_name = restaurant["name"] or restaurant["venue"]
+                    location = restaurant["place"]
 
         # restaurant_id = restaurant_id_map[i]
         out_vec.append(
