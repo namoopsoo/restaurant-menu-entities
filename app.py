@@ -28,6 +28,11 @@ dishdf_sample_10k = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-10k-sampl
 corpus = dishdf_sample_10k["name"].tolist()
 
 
+menuitemdf = load_dataset("namoopsoo-org/2023-12-17-nypl-menuitem").to_pandas()
+menupagedf = load_dataset("namoopsoo-org/2023-12-17-nypl-menupage").to_pandas()
+menudf = load_dataset("namoopsoo-org/2023-12-17-nypl-menu").to_pandas()
+
+
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
 st.write(dishdf_sample_10k.head())
 st.write("mmkay 2023-12-17-20:24")
@@ -68,11 +73,22 @@ def do_search():
     out_vec = []
     for score, i in zip(top_results[0], top_results[1]):
         i = int(i)
+        dish_id = dishdf_sample_10k.iloc[i]["id"]
+        dish_name = dishdf_sample_10k.iloc[i]["name"]
+
+        menu_page_id = menuitemdf[menuitemdf.dish_id == dish_id].iloc[0]["menu_page_id"]
+
+        menu_id = menupagedf[menupagedf.id == menu_page_id].iloc[0]["menu_id"]
+        restaurant = menudf[menudf.id == menu_id].iloc[0]
+        restaurant_name = restaurant["name"] or restaurant["venue"]
+        location = restaurant["place"]
+
         # restaurant_id = restaurant_id_map[i]
         out_vec.append(
-            {"text": corpus[i].strip(), "score": "(Score: {:.4f})".format(score),
-             # "restaurant": restaurant_map[restaurant_id]["name"],
-             # "address": restaurant_map[restaurant_id]["full_address"],
+            {"text": dish_name.strip(), 
+             "score": "(Score: {:.4f})".format(score),
+             "restaurant": restaurant_name,
+             "address": location,
              }
         )
 
