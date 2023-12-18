@@ -35,7 +35,7 @@ menudf = load_dataset("namoopsoo-org/2023-12-17-nypl-menu").to_pandas()
 
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
 st.write(dishdf_sample_10k.head())
-st.write("mmkay 2023-12-17-20:24")
+st.write("mmkay 2023-12-17-20:50")
 
 # Try that search again, 
 # query = "chicken parmesan sandwich"
