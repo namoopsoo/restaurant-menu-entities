@@ -115,7 +115,7 @@ def do_search():
 
 
 st.title("Use cosine simularity for a phrase")
-st.write(f"This below demo takes a phrase, embeds it with the model, \"{model_name}\", (from https://huggingface.co/sentence-transformers/all-MiniLM-L12-v2 )  and shows the ranked cosine similarity output against a 10k-row sample from the NYPL Dish dataset available at https://www.kaggle.com/datasets/prashant111/discover-the-menu/ . The dataset embeddings are stored in a provate huggingface dataset ")
+st.write(f"This below demo takes a phrase, embeds it with the model, \"{model_name}\", (from https://huggingface.co/sentence-transformers/all-MiniLM-L12-v2 )  and shows the ranked cosine similarity output against a 100k-row sample from the NYPL Dish dataset available at https://www.kaggle.com/datasets/prashant111/discover-the-menu/ . The dataset embeddings are stored in a provate huggingface dataset ")
 # st.session_state.query
 # button_ok = st.button("Search")
 
