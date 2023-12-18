@@ -11,15 +11,18 @@ from sentence_transformers.util import semantic_search, cos_sim
 from datasets import load_dataset
 
 
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+
 DATA_DIR = "."
 HF_TOKEN = os.getenv("HF_TOKEN")
 LIVE_APP = os.getenv("LIVE_APP", "no")
 
-
-loaded_embeddings = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
+loaded_embeddings = load_dataset(
+    "namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
 corpus_embeddings = torch.from_numpy(
     loaded_embeddings["train"].to_pandas().to_numpy()
-).to(torch.float)
+).to(torch.float).to(device)
 
 dishdf_sample_10k = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-10k-sample")["train"].to_pandas()
 corpus = dishdf_sample_10k["name"].tolist()
@@ -37,14 +40,14 @@ st.write("mmkay")
 # top_results = torch.topk(cos_scores, k=top_k)
 # print("query:", query, [[corpus[i], score] for (score, i) in zip(top_results[0], top_results[1])], "\n\n")
 
-
+blah = "cheese".to(device)
+blah
 
 model_name = "all-MiniLM-L12-v2"
-embedder = SentenceTransformer(
+model = SentenceTransformer(
     model_name,
     use_auth_token=HF_TOKEN,
-)
-HF_TOKEN
+).to(device)
 
 def do_search():
 
@@ -55,7 +58,7 @@ def do_search():
         st.write("Query empty, doing nothing")
         return
     # st.session_state.
-    query_embedding = embedder.encode(query, convert_to_tensor=True)
+    query_embedding = model.encode(query.to(device), convert_to_tensor=True)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
     cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
