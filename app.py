@@ -18,14 +18,20 @@ DATA_DIR = "."
 HF_TOKEN = os.getenv("HF_TOKEN")
 LIVE_APP = os.getenv("LIVE_APP", "no")
 
-loaded_embeddings = load_dataset(
-    "namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
+# 10k
+# loaded_embeddings = load_dataset( "namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
+# corpus_embeddings = torch.from_numpy(
+#     loaded_embeddings["train"].to_pandas().to_numpy()
+# ).to(torch.float).to(device)
+
+# 100k
+loaded_embeddings = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-embeddings-100k-sample")
 corpus_embeddings = torch.from_numpy(
     loaded_embeddings["train"].to_pandas().to_numpy()
 ).to(torch.float).to(device)
 
-dishdf_sample_10k = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-10k-sample")["train"].to_pandas()
-corpus = dishdf_sample_10k["name"].tolist()
+dishdf_sample = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-100k-sample")["train"].to_pandas()
+corpus = dishdf_sample["name"].tolist()
 
 
 menuitemdf = load_dataset("namoopsoo-org/2023-12-17-nypl-menuitem")["train"].to_pandas()
@@ -34,7 +40,7 @@ menudf = load_dataset("namoopsoo-org/2023-12-17-nypl-menu")["train"].to_pandas()
 
 
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
-st.write(dishdf_sample_10k.head())
+st.write(dishdf_sample.head())
 st.write("mmkay 2023-12-17-20:52")
 
 # Try that search again, 
@@ -73,8 +79,8 @@ def do_search():
     out_vec = []
     for score, i in zip(top_results[0], top_results[1]):
         i = int(i)
-        dish_id = dishdf_sample_10k.iloc[i]["id"]
-        dish_name = dishdf_sample_10k.iloc[i]["name"]
+        dish_id = dishdf_sample.iloc[i]["id"]
+        dish_name = dishdf_sample.iloc[i]["name"]
 
         if menuitemdf[menuitemdf.dish_id == dish_id].empty:
             restaurant_name = "-"
