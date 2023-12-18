@@ -21,7 +21,7 @@ corpus_embeddings = torch.from_numpy(
     loaded_embeddings["train"].to_pandas().to_numpy()
 ).to(torch.float)
 
-dishdf_sample_10k = load_dataset("namoopsoo-org/namoopsoo/2023-12-17-nypl-dishes-10k-sample")["train"].to_pandas()
+dishdf_sample_10k = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-10k-sample")["train"].to_pandas()
 corpus = dishdf_sample_10k["name"].tolist()
 
 
