@@ -30,7 +30,7 @@ corpus = dishdf_sample_10k["name"].tolist()
 
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
 st.write(dishdf_sample_10k.head())
-st.write("mmkay")
+st.write("mmkay 2023-12-17-20:18")
 
 # Try that search again, 
 # query = "chicken parmesan sandwich"
