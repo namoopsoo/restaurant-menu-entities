@@ -15,6 +15,7 @@ DATA_DIR = "."
 HF_TOKEN = os.getenv("HF_TOKEN")
 LIVE_APP = os.getenv("LIVE_APP", "no")
 
+
 loaded_embeddings = load_dataset("namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
 corpus_embeddings = torch.from_numpy(
     loaded_embeddings["train"].to_pandas().to_numpy()
@@ -22,6 +23,11 @@ corpus_embeddings = torch.from_numpy(
 
 dishdf_sample_10k = load_dataset("namoopsoo-org/namoopsoo/2023-12-17-nypl-dishes-10k-sample")["train"].to_pandas()
 corpus = dishdf_sample_10k["name"].tolist()
+
+
+st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
+st.write(dishdf_sample_10k.head())
+st.write("mmkay")
 
 # Try that search again, 
 # query = "chicken parmesan sandwich"
