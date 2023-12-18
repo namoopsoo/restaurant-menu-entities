@@ -30,7 +30,7 @@ corpus = dishdf_sample_10k["name"].tolist()
 
 st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.org/dishes ) ")
 st.write(dishdf_sample_10k.head())
-st.write("mmkay 2023-12-17-20:18")
+st.write("mmkay 2023-12-17-20:24")
 
 # Try that search again, 
 # query = "chicken parmesan sandwich"
@@ -39,9 +39,6 @@ st.write("mmkay 2023-12-17-20:18")
 # top_k = 5
 # top_results = torch.topk(cos_scores, k=top_k)
 # print("query:", query, [[corpus[i], score] for (score, i) in zip(top_results[0], top_results[1])], "\n\n")
-
-blah = "cheese".to(device)
-blah
 
 model_name = "all-MiniLM-L12-v2"
 model = SentenceTransformer(
@@ -58,7 +55,8 @@ def do_search():
         st.write("Query empty, doing nothing")
         return
     # st.session_state.
-    query_embedding = model.encode(query.to(device), convert_to_tensor=True)
+    query_embedding = model.encode(query, convert_to_tensor=True)
+    query_embedding = query_embedding.to(device)
 
     # We use cosine-similarity and torch.topk to find the highest 5 scores
     cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
