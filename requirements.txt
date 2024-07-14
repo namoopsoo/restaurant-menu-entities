@@ -7,3 +7,6 @@ streamlit
 matplotlib
 datasets
 ipython
+polars
+langchain_cohere
+langchain_postgres

@@ -1,6 +1,10 @@
 
-
-
+import os 
+import logging
+from langchain_cohere import CohereEmbeddings
+from langchain_core.documents import Document
+from langchain_postgres import PGVector
+from langchain_postgres.vectorstores import PGVector
 
 
 def search(query, corpus):
@@ -33,3 +37,31 @@ def search(query, corpus):
 
     st.table(pd.DataFrame.from_records(out_vec))
 
+
+def embed_and_load_into_db(documents, id_col, text_col, metadata_cols, table_name):
+
+
+    password = os.getenv("PG_PASSWORD")
+    connection = f"postgresql+psycopg://michal:{password}@localhost:5432/langchain"  # Uses psycopg3!
+    collection_name = "my_docs"
+    embeddings = CohereEmbeddings()
+
+    vectorstore = PGVector(
+        embeddings=embeddings,
+        collection_name=collection_name,
+        connection=connection,
+        use_jsonb=True,
+    )
+    
+    docs = [
+        Document(
+            page_content=row[text_col],
+            metadata={"id": row[id_col], **{k: row[k] for k in metadata_cols}},
+        )
+        for row in documents
+    ]
+
+    result = vectorstore.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
+
+
+    return result
