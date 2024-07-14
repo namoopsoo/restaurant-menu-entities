@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from pathlib import Path
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 import matplotlib.pyplot as plt
 import torch
 
@@ -13,10 +13,13 @@ from datasets import load_dataset
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-
 DATA_DIR = "."
-HF_TOKEN = os.getenv("HF_TOKEN")
 LIVE_APP = os.getenv("LIVE_APP", "no")
+
+if LIVE_APP == "no":
+    load_dotenv()
+
+HF_TOKEN = os.getenv("HF_TOKEN")
 
 # 10k
 # loaded_embeddings = load_dataset( "namoopsoo-org/2023-12-17-nypl-dishes-embeddings-10k-sample")
