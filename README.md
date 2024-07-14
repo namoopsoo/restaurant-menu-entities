@@ -19,3 +19,5 @@ pip install -r requirements.txt
 ```
 ## locally 
 streamlit run app.py
+
+![](assets/Screenshot2024-07-14-14.40.06.png)
