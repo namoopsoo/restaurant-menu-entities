@@ -8,6 +8,7 @@ from dotenv import dotenv_values, load_dotenv
 # import matplotlib.pyplot as plt
 
 from utils import search_pg_vector
+from nlp import is_this_about_food
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -31,13 +32,11 @@ def do_search():
     #  TODO is it on topic?
     class_df, on_topic, food_pred = is_this_about_food(query)
 
-    st.write(f"Is this query about food?")
+    st.write("Is this query about food?")
     st.table(class_df)
 
-
     top_k = 10
-    top_results = search_pg_vector(query, k=top_k)
-
+    docs_scored = search_pg_vector(query, k=top_k)
 
     results_df = pl.from_dicts(
         [{**(row[0].metadata), "item": row[0].page_content, "score": row[1]} for row in docs_scored]

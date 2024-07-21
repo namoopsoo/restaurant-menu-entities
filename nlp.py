@@ -24,7 +24,7 @@ def is_this_about_food(query):
     len_food_topics = len(topics)
     classifications = check_if_on_topic(query, topics)
 
-    class_df = pl.from_records([classification["labels"], classification["scores"]], schema=["label", "score"])
+    class_df = pl.from_records([classifications["labels"], classifications["scores"]], schema=["label", "score"])
     
     food_pred = sum(classifications["scores"]) / len_food_topics
 

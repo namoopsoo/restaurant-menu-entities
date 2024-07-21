@@ -46,9 +46,9 @@ st.title("Look at this menu/dish dataset from NYPL! 📚 ( https://menus.nypl.or
 st.write(dishdf_sample.head())
 st.write("mmkay 2023-12-17-20:52")
 
-# Try that search again, 
+# Try that search again,
 # query = "chicken parmesan sandwich"
-# query_embedding = model.encode(query, convert_to_tensor=True)    
+# query_embedding = model.encode(query, convert_to_tensor=True)
 # cos_scores = util.cos_sim(query_embedding, corpus_embeddings)[0]
 # top_k = 5
 # top_results = torch.topk(cos_scores, k=top_k)
@@ -107,7 +107,7 @@ def do_search():
 
         # restaurant_id = restaurant_id_map[i]
         out_vec.append(
-            {"text": dish_name.strip(), 
+            {"text": dish_name.strip(),
              "score": "(Score: {:.4f})".format(score),
              "restaurant": restaurant_name,
              "address": location,
