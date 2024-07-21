@@ -8,7 +8,7 @@ from dotenv import dotenv_values, load_dotenv
 # import matplotlib.pyplot as plt
 
 from utils import search_pg_vector
-from nlp import is_this_about_food
+from nlp import is_this_about_food, extract_geo_location_stuff
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
@@ -35,6 +35,10 @@ def do_search():
     st.write("Is this query about food?")
     st.table(class_df)
 
+    if not on_topic:
+        st.write("Looks like this query is off topic.")
+        return
+
     top_k = 10
     docs_scored = search_pg_vector(query, k=top_k)
 
@@ -45,6 +49,14 @@ def do_search():
     st.write(f"\nTop {top_k} most similar sentences in corpus: to \"{query}\"")
 
     st.table(results_df)
+
+    location_tokens, all_other_tokens = extract_geo_location_stuff(query)
+    if location_tokens:
+        st.write(f"location tokens, {location_tokens}")
+        st.write(f"all other tokens, {all_other_tokens}")
+    else:
+        st.write("no location tokens found.")
+
 
 
 
