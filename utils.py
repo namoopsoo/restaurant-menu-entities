@@ -1,4 +1,3 @@
-
 import os 
 import logging
 from langchain_cohere import CohereEmbeddings
@@ -38,11 +37,23 @@ def search(query, corpus):
     st.table(pd.DataFrame.from_records(out_vec))
 
 
-def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
+def search_pg_vector(query):
+    vectorstore = make_vectorstore_thing()
+
+    vectorstore.similarity_search_with_relevance_score
+    vectorstore.similarity_search_with_score
+
+    docs = vectorstore.similarity_search(
+        query, k=10,
+        # filter={"id": {"$in": [1, 5, 2, 9]}}
+    )
+    return docs
 
 
+def make_vectorstore_thing():
+    username = os.getenv("PG_USER")
     password = os.getenv("PG_PASSWORD")
-    connection = f"postgresql+psycopg://michal:{password}@localhost:5432/langchain"  # Uses psycopg3!
+    connection = f"postgresql+psycopg://{username}:{password}@localhost:5432/langchain"  # Uses psycopg3!
     collection_name = "my_docs"
     embeddings = CohereEmbeddings()
 
@@ -52,6 +63,11 @@ def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
         connection=connection,
         use_jsonb=True,
     )
+    return vectorstore
+
+
+def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
+    vectorstore = make_vectorstore_thing()
     
     docs = [
         Document(
@@ -61,7 +77,7 @@ def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
         for row in documents
     ]
 
-    result = vectorstore.add_documents(docs, ids=[doc.metadata["id"] for doc in docs])
+    result = vectorstore.add_documents( docs, ids=[doc.metadata["id"] for doc in docs])
 
 
     return result
