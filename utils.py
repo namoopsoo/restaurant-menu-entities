@@ -38,7 +38,7 @@ def search(query, corpus):
     st.table(pd.DataFrame.from_records(out_vec))
 
 
-def embed_and_load_into_db(documents, id_col, text_col, metadata_cols, table_name):
+def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
 
 
     password = os.getenv("PG_PASSWORD")
