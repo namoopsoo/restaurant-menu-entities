@@ -50,17 +50,25 @@ from utils import embed_and_load_into_db, make_vectorstore_thing
 
 vectorstore = make_vectorstore_thing()
 
-
 # clean slate
 vectorstore.drop_tables()
 
-sample_df = df.sample(n=10000, seed=214)
+sample_df = df.sample(n=10000, seed=214)  # seed chosen to maximize the "chicken parmesan query results"
 
-utils.embed_and_load_into_db(
+ids = utils.embed_and_load_into_db(
     sample_df.to_dicts(),
     id_col="id",
     text_col="name",
-    metadata_cols=["price", "restaurant_name", "full_address"],
-    
+    metadata_cols=["price", "restaurant_name", "full_address", "lat", "lng"],
 )
+```
+
+Quick search 
+
+```python
+from utils import search_pg_vector
+
+vectorstore = make_vectorstore_thing()
+
+docs_with_scores = search_pg_vector("chicken parm")
 ```

@@ -37,11 +37,18 @@ def search(query, corpus):
     st.table(pd.DataFrame.from_records(out_vec))
 
 
-def search_pg_vector(query):
+def search_pg_vector(query, k=10):
     vectorstore = make_vectorstore_thing()
 
-    vectorstore.similarity_search_with_relevance_score
-    vectorstore.similarity_search_with_score
+    docs_scored = vectorstore.similarity_search_with_relevance_scores(
+        query,
+        # filter={"id": {"$in": [1, 5, 2, 9]}}
+        k=k,
+    )
+
+    # docs_scored_2 = vectorstore.similarity_search_with_score(query, k=10
+
+    return docs_scored
 
     docs = vectorstore.similarity_search(
         query, k=10,
@@ -81,3 +88,6 @@ def embed_and_load_into_db(documents, id_col, text_col, metadata_cols):
 
 
     return result
+
+
+
