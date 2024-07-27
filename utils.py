@@ -64,7 +64,9 @@ def search_pg_vector(query, k=10):
 def make_vectorstore_thing():
     username = os.getenv("PG_USER")
     password = os.getenv("PG_PASSWORD")
-    connection = f"postgresql+psycopg://{username}:{password}@localhost:5432/langchain"  # Uses psycopg3!
+    host = os.getenv("PG_HOST")
+    port = os.getenv("PG_PORT")
+    connection = f"postgresql+psycopg://{username}:{password}@{host}:{port}/langchain"  # Uses psycopg3!
     collection_name = "my_docs"
     embeddings = CohereEmbeddings()
 

@@ -17,14 +17,34 @@ a new `python3 -m venv ~/.python_venvs/blahvenv` with ,
 ```
 pip install -r requirements.txt
 ```
-## locally 
+
+
+### setup local postgresql
+One way to setup postgresql at least on macos, is to `brew install postgresql@14` . 
+And then `brew install pgvector` (as noted per [pgvector docs](https://github.com/pgvector/pgvector?tab=readme-ov-file#homebrew)).  And note that as noted in those docs, at the time of this writing, this only installs the `pgvector` extension to `postgresql@14` of homebrew in particular. ( And this is try for `brew install postgis` incidentally. )
+
+
+And add into a `.env` , the variables,
+
+```sh
+PG_USER=...
+PG_PASSWORD=...
+PG_HOST=localhost
+PG_PORT=5432
+```
+
+
+## prepare data locally 
 streamlit run app.py
 
 ![](assets/Screenshot2024-07-14-14.40.06.png)
 
 
-### Add this uber eats data into postgresql , 
+### Add this kaggle uber eats data into postgresql , 
 
+This csv data, `restaurant-menus.csv`, `restaurants.csv`, was downloaded from this [kaggle link](https://www.kaggle.com/code/sadeghjalalian/uber-eats-restaurant-menus/input?select=restaurants.csv).
+
+And loaded to a local postgresql with the following.
 ```python
 
 import polars as pl
