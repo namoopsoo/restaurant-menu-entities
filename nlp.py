@@ -36,14 +36,14 @@ def is_this_about_food(query):
 
 def extract_geo_location_stuff(query):
 
-    classifier = pipeline(task="ner")
+    token_classifier = pipeline(task="ner")
     # query = "I'm on the corner of 14th stret and Broadway and I am trying to get to 59th street and Central Park West ok how can I travel?"
 
-    model_name = "dbmdz/bert-large-cased-finetuned-conll03-english"
+    # model_name = "dbmdz/bert-large-cased-finetuned-conll03-english"
 
-    tokenizer = BertTokenizer.from_pretrained(model_name)
+    # tokenizer = BertTokenizer.from_pretrained(model_name)
 
-    preds = classifier(query)
+    preds = token_classifier(query)
     preds = [
         {
             "entity": pred["entity"],
@@ -58,7 +58,7 @@ def extract_geo_location_stuff(query):
     print("DEBUG ner extract.")
     print(*preds, sep="\n")
 
-    tokens = tokenizer.tokenize(query)
+    tokens = token_classifier.tokenizer.tokenize(query)
 
     location_indexes = [x["index"] - 1
                         for x in preds
